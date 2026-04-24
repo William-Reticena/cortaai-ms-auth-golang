@@ -16,6 +16,5 @@ type RefreshTokenRequest struct {
 }
 
 type ValidateTokenRequest struct {
-	Token string `json:"token" binding:"required"`
+	DsToken string `json:"dsToken" binding:"required"`
 }
-

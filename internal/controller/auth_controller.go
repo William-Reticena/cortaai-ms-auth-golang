@@ -149,10 +149,10 @@ func (a *AuthController) ValidateToken(c *gin.Context) {
 		return
 	}
 
-	claims, err := utils.ValidateToken(req.Token)
+	claims, err := utils.ValidateToken(req.DsToken)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, response.ValidateTokenResponse{
-			Valid: false,
+			InValid: false,
 		})
 		return
 	}
@@ -160,13 +160,13 @@ func (a *AuthController) ValidateToken(c *gin.Context) {
 	user, err := a.AuthService.GetUserByID(claims.UserID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, response.ValidateTokenResponse{
-			Valid: false,
+			InValid: false,
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, response.ValidateTokenResponse{
-		Valid: true,
+		InValid: true,
 		User: &response.UserResponse{
 			ID:      user.ID,
 			DsEmail: user.Email,
