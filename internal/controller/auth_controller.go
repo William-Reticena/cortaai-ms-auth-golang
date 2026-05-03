@@ -36,7 +36,7 @@ func (a *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	accessToken, err := utils.GenerateToken(user.ID, user.Email, 15)
+	accessToken, err := utils.GenerateToken(user.ID, user.Email, utils.GetTokenExpirationMinutes())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
 			Error:       "token_generation_failed",
@@ -54,11 +54,12 @@ func (a *AuthController) Login(c *gin.Context) {
 		return
 	}
 
+	expiresIn := utils.GetTokenExpirationMinutes() * 60
 	c.JSON(http.StatusOK, response.LoginResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		TokenType:    "Bearer",
-		ExpiresIn:    15 * 60,
+		ExpiresIn:    expiresIn,
 		User: &response.UserResponse{
 			ID:      user.ID,
 			DsEmail: user.Email,
@@ -122,7 +123,7 @@ func (a *AuthController) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	newAccessToken, err := utils.GenerateToken(claims.UserID, claims.Email, 15)
+	newAccessToken, err := utils.GenerateToken(claims.UserID, claims.Email, utils.GetTokenExpirationMinutes())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
 			Error:       "token_generation_failed",
@@ -131,10 +132,11 @@ func (a *AuthController) RefreshToken(c *gin.Context) {
 		return
 	}
 
+	expiresIn := utils.GetTokenExpirationMinutes() * 60
 	c.JSON(http.StatusOK, response.RefreshTokenResponse{
 		AccessToken: newAccessToken,
 		TokenType:   "Bearer",
-		ExpiresIn:   15 * 60,
+		ExpiresIn:   expiresIn,
 	})
 }
 

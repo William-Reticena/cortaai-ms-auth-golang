@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -21,6 +22,18 @@ func getJWTSecret() []byte {
 		return nil
 	}
 	return []byte(secret)
+}
+
+func GetTokenExpirationMinutes() int {
+	expirationStr := os.Getenv("TOKEN_EXPIRATION_MINUTES")
+	if expirationStr == "" {
+		return 60
+	}
+	expiration, err := strconv.Atoi(expirationStr)
+	if err != nil {
+		return 60
+	}
+	return expiration
 }
 
 func GenerateToken(userID int, email string, expirationMinutes int) (string, error) {
